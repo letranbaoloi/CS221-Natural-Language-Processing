@@ -28,3 +28,6 @@ DNN/__pycache__/
 .env
 
 .idea
+/my_model
+/output_dir
+/output_dir_davidson
