@@ -19,3 +19,8 @@
 [INFO] (utils)   vocab_path: None
 [INFO] (utils)   word_list_path: .\data\word_list\word_all.txt
 [INFO] (utils)   word_norm: 1
+[INFO] (data_reader) Creating vocabulary.........
+[INFO] (data_reader)   666630 total words, 46472 unique words
+[INFO] (data_reader)   Vocab size: 46472
+[INFO] (data_reader) <unk> hit rate: 0.00%
+[INFO] (data_reader) <unk> hit rate: 0.01%

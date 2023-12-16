@@ -83,8 +83,6 @@ def create_vocab(tweets, vocab_size=0):
     return vocab
 
 def get_indices(tweets, vocab, word_list_path):
-    from sklearn import preprocessing
-    import enchant
     d = enchant.Dict('en-US')
 
     with open(word_list_path, 'r', encoding='utf-8') as f:  # 得到词表
@@ -95,14 +93,12 @@ def get_indices(tweets, vocab, word_list_path):
     unk_hit, total = 0., 0.
     for i in range(len(tweets)):
         tweet = tp.strip_hashtags(tweets[i])
-
-        indices_char = []
         indices_char = strToIndexs2(tweet)
         content = tokenize(tweet)
         n = len(content)
         t = False
         indices = []
-        category_indeics = []  # "Dirty words are 0, incorrect words are 1, and others are 2."
+        category_indices = []  # "Dirty words are 0, incorrect words are 1, and others are 2."
         # for word in content:
         for j in range(n):
             word = content[j]
@@ -121,12 +117,12 @@ def get_indices(tweets, vocab, word_list_path):
                 unk_hit += 1
 
             if word in word_list:
-                category_indeics.append(0)
+                category_indices.append(0)
             elif (not d.check(word)) and ('@' not in word) and (word not in
                   [':', ',', "''", '``', '!', "'s", '?', 'facebook', "n't","'re", "'", "'ve", 'everytime']):
-                category_indeics.append(1)
+                category_indices.append(1)
             else:
-                category_indeics.append(2)
+                category_indices.append(2)
             total += 1
 
         if t:
@@ -136,7 +132,7 @@ def get_indices(tweets, vocab, word_list_path):
         ruling_embedding.append(ruling)    # It corresponds to category embedding in the paper
         data_x.append(indices)
         char_x.append(indices_char)
-        category_embedding.append(category_indeics)   # It's just a category of words, it don't use now.
+        category_embedding.append(category_indices)   # It's just a category of words, it don't use now.
     logger.info('<unk> hit rate: %.2f%%' % (100 * unk_hit / total))
     return data_x, char_x, ruling_embedding, category_embedding
 
