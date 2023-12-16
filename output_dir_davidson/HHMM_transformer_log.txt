@@ -1,6 +1,6 @@
 [INFO] (utils) Arguments:
-[INFO] (utils)   batch_size: 512
-[INFO] (utils)   command: .\DNN\train.py -d .\data\davidson\dv_train.csv --trial .\data\davidson\dv_test.csv -s .\data\sentiment_datasets\train_E6oV3lV.csv --word_list .\data\word_list\word_all.txt --emb .\data\glove.6B.300d.txt -o .\output_dir_davidson -b 512 --epochs 60 --lr 0.002 --maxlen 50 -t HHMM_transformer
+[INFO] (utils)   batch_size: 1
+[INFO] (utils)   command: .\DNN\train.py -d .\data\davidson\dv_train.csv --trial .\data\davidson\dv_test.csv -s .\data\sentiment_datasets\train_E6oV3lV.csv --word_list .\data\word_list\word_all.txt --emb .\data\glove.6B.300d.txt -o .\output_dir_davidson -b 1 --epochs 60 --lr 0.002 --maxlen 50 -t HHMM_transformer
 [INFO] (utils)   data_path: .\data\davidson\dv_train.csv
 [INFO] (utils)   dropout_prob: 0.1
 [INFO] (utils)   emb_dim: 300
@@ -20,7 +20,28 @@
 [INFO] (utils)   word_list_path: .\data\word_list\word_all.txt
 [INFO] (utils)   word_norm: 1
 [INFO] (data_reader) Creating vocabulary.........
-[INFO] (data_reader)   666630 total words, 46472 unique words
+[INFO] (data_reader)   666678 total words, 46472 unique words
 [INFO] (data_reader)   Vocab size: 46472
 [INFO] (data_reader) <unk> hit rate: 0.00%
 [INFO] (data_reader) <unk> hit rate: 0.01%
+[INFO] (__main__) Statistics:
+[INFO] (__main__)   train_x shape: (54266, 50)
+[INFO] (__main__)   test_x shape:  (2800, 50)
+[INFO] (__main__)   train_chars shape: (54266, 300)
+[INFO] (__main__)   test_chars shape:  (2800, 300)
+[INFO] (__main__)   train_y shape: (54266, 2)
+[INFO] (__main__)   test_y shape:  (2800, 3)
+[INFO] (models) Building a HHMM_transformer
+[WARNING] (tensorflow) From C:\Users\bmhun\.conda\envs\sks\lib\site-packages\keras\src\backend.py:1398: The name tf.executing_eagerly_outside_functions is deprecated. Please use tf.compat.v1.executing_eagerly_outside_functions instead.
+
+[INFO] (models) Initializing lookup table
+[INFO] (w2vEmbReader) Loading embeddings from: .\data\glove.6B.300d.txt
+[INFO] (w2vEmbReader)   #vectors: 400000, #dimensions: 300
+[INFO] (w2vEmbReader) 23044/46472 word vectors initialized (hit rate: 49.59%)
+[WARNING] (tensorflow) From C:\Users\bmhun\.conda\envs\sks\lib\site-packages\keras\src\optimizers\__init__.py:309: The name tf.train.Optimizer is deprecated. Please use tf.compat.v1.train.Optimizer instead.
+
+[INFO] (__main__) Saving model architecture
+[WARNING] (tensorflow) From C:\Users\bmhun\.conda\envs\sks\lib\site-packages\keras\src\utils\tf_utils.py:492: The name tf.ragged.RaggedTensorValue is deprecated. Please use tf.compat.v1.ragged.RaggedTensorValue instead.
+
+[WARNING] (tensorflow) From C:\Users\bmhun\.conda\envs\sks\lib\site-packages\keras\src\engine\base_layer_utils.py:384: The name tf.executing_eagerly_outside_functions is deprecated. Please use tf.compat.v1.executing_eagerly_outside_functions instead.
+

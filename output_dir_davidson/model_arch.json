@@ -1,0 +1,649 @@
+{
+  "class_name": "Functional",
+  "config": {
+    "name": "model",
+    "trainable": true,
+    "layers": [
+      {
+        "module": "keras.layers",
+        "class_name": "InputLayer",
+        "config": {
+          "batch_input_shape": [
+            null,
+            50
+          ],
+          "dtype": "int32",
+          "sparse": false,
+          "ragged": false,
+          "name": "sequence_input"
+        },
+        "registered_name": null,
+        "name": "sequence_input",
+        "inbound_nodes": []
+      },
+      {
+        "module": "keras.layers",
+        "class_name": "InputLayer",
+        "config": {
+          "batch_input_shape": [
+            null,
+            50
+          ],
+          "dtype": "float32",
+          "sparse": false,
+          "ragged": false,
+          "name": "input_1"
+        },
+        "registered_name": null,
+        "name": "input_1",
+        "inbound_nodes": []
+      },
+      {
+        "module": "keras.layers",
+        "class_name": "Embedding",
+        "config": {
+          "name": "emb",
+          "trainable": true,
+          "dtype": "float32",
+          "batch_input_shape": [
+            null,
+            null
+          ],
+          "input_dim": 46472,
+          "output_dim": 300,
+          "embeddings_initializer": {
+            "module": "keras.initializers",
+            "class_name": "RandomUniform",
+            "config": {
+              "minval": -0.05,
+              "maxval": 0.05,
+              "seed": null
+            },
+            "registered_name": null
+          },
+          "embeddings_regularizer": null,
+          "activity_regularizer": null,
+          "embeddings_constraint": null,
+          "mask_zero": false,
+          "input_length": null
+        },
+        "registered_name": null,
+        "build_config": {
+          "input_shape": [
+            null,
+            50
+          ]
+        },
+        "name": "emb",
+        "inbound_nodes": [
+          [
+            [
+              "sequence_input",
+              0,
+              0,
+              {}
+            ]
+          ]
+        ]
+      },
+      {
+        "module": "keras.layers",
+        "class_name": "Embedding",
+        "config": {
+          "name": "embedding",
+          "trainable": true,
+          "dtype": "float32",
+          "batch_input_shape": [
+            null,
+            null
+          ],
+          "input_dim": 46472,
+          "output_dim": 100,
+          "embeddings_initializer": {
+            "module": "keras.initializers",
+            "class_name": "RandomUniform",
+            "config": {
+              "minval": -0.05,
+              "maxval": 0.05,
+              "seed": null
+            },
+            "registered_name": null
+          },
+          "embeddings_regularizer": null,
+          "activity_regularizer": null,
+          "embeddings_constraint": null,
+          "mask_zero": false,
+          "input_length": null
+        },
+        "registered_name": null,
+        "build_config": {
+          "input_shape": [
+            null,
+            50
+          ]
+        },
+        "name": "embedding",
+        "inbound_nodes": [
+          [
+            [
+              "input_1",
+              0,
+              0,
+              {}
+            ]
+          ]
+        ]
+      },
+      {
+        "module": "keras.layers",
+        "class_name": "Concatenate",
+        "config": {
+          "name": "concatenate",
+          "trainable": true,
+          "dtype": "float32",
+          "axis": -1
+        },
+        "registered_name": null,
+        "build_config": {
+          "input_shape": [
+            [
+              null,
+              50,
+              300
+            ],
+            [
+              null,
+              50,
+              100
+            ]
+          ]
+        },
+        "name": "concatenate",
+        "inbound_nodes": [
+          [
+            [
+              "emb",
+              0,
+              0,
+              {}
+            ],
+            [
+              "embedding",
+              0,
+              0,
+              {}
+            ]
+          ]
+        ]
+      },
+      {
+        "module": "my_layers",
+        "class_name": "HSMMBottom",
+        "config": {
+          "name": "hsmm_bottom",
+          "trainable": true,
+          "dtype": "float32",
+          "model_type": "HHMM_transformer",
+          "non_gate": false,
+          "gate_unit": 150,
+          "expert_units": [
+            150,
+            150
+          ],
+          "task_num": 2,
+          "expert_num": 3,
+          "experts": [
+            {
+              "module": "my_layers",
+              "class_name": "ExpertModuleTrm",
+              "config": {
+                "name": "expert_module_trm",
+                "trainable": true,
+                "dtype": "float32",
+                "units": [
+                  150,
+                  150
+                ]
+              },
+              "registered_name": "ExpertModuleTrm",
+              "build_config": {
+                "input_shape": [
+                  null,
+                  50,
+                  400
+                ]
+              }
+            },
+            {
+              "module": "my_layers",
+              "class_name": "ExpertModuleTrm",
+              "config": {
+                "name": "expert_module_trm_1",
+                "trainable": true,
+                "dtype": "float32",
+                "units": [
+                  150,
+                  150
+                ]
+              },
+              "registered_name": "ExpertModuleTrm",
+              "build_config": {
+                "input_shape": [
+                  null,
+                  50,
+                  400
+                ]
+              }
+            },
+            {
+              "module": "my_layers",
+              "class_name": "ExpertModuleTrm",
+              "config": {
+                "name": "expert_module_trm_2",
+                "trainable": true,
+                "dtype": "float32",
+                "units": [
+                  150,
+                  150
+                ]
+              },
+              "registered_name": "ExpertModuleTrm",
+              "build_config": {
+                "input_shape": [
+                  null,
+                  50,
+                  400
+                ]
+              }
+            }
+          ],
+          "gates": [
+            {
+              "module": "my_layers",
+              "class_name": "GateModule",
+              "config": {
+                "name": "gate_module",
+                "trainable": true,
+                "dtype": "float32",
+                "units": [
+                  150,
+                  3
+                ]
+              },
+              "registered_name": "GateModule",
+              "build_config": {
+                "input_shape": [
+                  null,
+                  50,
+                  400
+                ]
+              }
+            },
+            {
+              "module": "my_layers",
+              "class_name": "GateModule",
+              "config": {
+                "name": "gate_module_1",
+                "trainable": true,
+                "dtype": "float32",
+                "units": [
+                  150,
+                  3
+                ]
+              },
+              "registered_name": "GateModule",
+              "build_config": {
+                "input_shape": [
+                  null,
+                  50,
+                  400
+                ]
+              }
+            }
+          ]
+        },
+        "registered_name": "HSMMBottom",
+        "build_config": {
+          "input_shape": [
+            null,
+            50,
+            400
+          ]
+        },
+        "name": "hsmm_bottom",
+        "inbound_nodes": [
+          [
+            [
+              "concatenate",
+              0,
+              0,
+              {}
+            ]
+          ]
+        ]
+      },
+      {
+        "module": "keras.src.layers.core.tf_op_layer",
+        "class_name": "SlicingOpLambda",
+        "config": {
+          "name": "tf.__operators__.getitem",
+          "trainable": true,
+          "dtype": "float32",
+          "function": "__operators__.getitem"
+        },
+        "registered_name": "SlicingOpLambda",
+        "build_config": {
+          "input_shape": [
+            null,
+            2,
+            150
+          ]
+        },
+        "name": "tf.__operators__.getitem",
+        "inbound_nodes": [
+          [
+            "hsmm_bottom",
+            0,
+            0,
+            {
+              "slice_spec": [
+                {
+                  "start": null,
+                  "stop": null,
+                  "step": null
+                },
+                0,
+                {
+                  "start": null,
+                  "stop": null,
+                  "step": null
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      {
+        "module": "keras.src.layers.core.tf_op_layer",
+        "class_name": "SlicingOpLambda",
+        "config": {
+          "name": "tf.__operators__.getitem_1",
+          "trainable": true,
+          "dtype": "float32",
+          "function": "__operators__.getitem"
+        },
+        "registered_name": "SlicingOpLambda",
+        "build_config": {
+          "input_shape": [
+            null,
+            2,
+            150
+          ]
+        },
+        "name": "tf.__operators__.getitem_1",
+        "inbound_nodes": [
+          [
+            "hsmm_bottom",
+            0,
+            0,
+            {
+              "slice_spec": [
+                {
+                  "start": null,
+                  "stop": null,
+                  "step": null
+                },
+                1,
+                {
+                  "start": null,
+                  "stop": null,
+                  "step": null
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      {
+        "module": "my_layers",
+        "class_name": "HSMMTower",
+        "config": {
+          "name": "hsmm_tower",
+          "trainable": true,
+          "dtype": "float32",
+          "units": [
+            50,
+            2
+          ]
+        },
+        "registered_name": "HSMMTower",
+        "build_config": {
+          "input_shape": [
+            null,
+            150
+          ]
+        },
+        "name": "hsmm_tower",
+        "inbound_nodes": [
+          [
+            [
+              "tf.__operators__.getitem",
+              0,
+              0,
+              {}
+            ]
+          ]
+        ]
+      },
+      {
+        "module": "my_layers",
+        "class_name": "HSMMTower",
+        "config": {
+          "name": "hsmm_tower_1",
+          "trainable": true,
+          "dtype": "float32",
+          "units": [
+            50,
+            2
+          ]
+        },
+        "registered_name": "HSMMTower",
+        "build_config": {
+          "input_shape": [
+            null,
+            150
+          ]
+        },
+        "name": "hsmm_tower_1",
+        "inbound_nodes": [
+          [
+            [
+              "tf.__operators__.getitem_1",
+              0,
+              0,
+              {}
+            ]
+          ]
+        ]
+      },
+      {
+        "module": "keras.layers",
+        "class_name": "InputLayer",
+        "config": {
+          "batch_input_shape": [
+            null,
+            2
+          ],
+          "dtype": "float32",
+          "sparse": false,
+          "ragged": false,
+          "name": "taskid_input"
+        },
+        "registered_name": null,
+        "name": "taskid_input",
+        "inbound_nodes": []
+      },
+      {
+        "module": "keras.src.layers.core.tf_op_layer",
+        "class_name": "TFOpLambda",
+        "config": {
+          "name": "tf.stack",
+          "trainable": true,
+          "dtype": "float32",
+          "function": "stack"
+        },
+        "registered_name": "TFOpLambda",
+        "build_config": {
+          "input_shape": [
+            [
+              null,
+              2
+            ],
+            [
+              null,
+              2
+            ]
+          ]
+        },
+        "name": "tf.stack",
+        "inbound_nodes": [
+          [
+            [
+              "hsmm_tower",
+              0,
+              0,
+              {
+                "axis": -1
+              }
+            ],
+            [
+              "hsmm_tower_1",
+              0,
+              0,
+              {
+                "axis": -1
+              }
+            ]
+          ]
+        ]
+      },
+      {
+        "module": "keras.src.layers.core.tf_op_layer",
+        "class_name": "TFOpLambda",
+        "config": {
+          "name": "tf.expand_dims",
+          "trainable": true,
+          "dtype": "float32",
+          "function": "expand_dims"
+        },
+        "registered_name": "TFOpLambda",
+        "build_config": {
+          "input_shape": [
+            null,
+            2
+          ]
+        },
+        "name": "tf.expand_dims",
+        "inbound_nodes": [
+          [
+            "taskid_input",
+            0,
+            0,
+            {
+              "axis": -1
+            }
+          ]
+        ]
+      },
+      {
+        "module": "keras.src.layers.core.tf_op_layer",
+        "class_name": "TFOpLambda",
+        "config": {
+          "name": "tf.linalg.matmul",
+          "trainable": true,
+          "dtype": "float32",
+          "function": "linalg.matmul"
+        },
+        "registered_name": "TFOpLambda",
+        "build_config": {
+          "input_shape": [
+            null,
+            2,
+            2
+          ]
+        },
+        "name": "tf.linalg.matmul",
+        "inbound_nodes": [
+          [
+            "tf.stack",
+            0,
+            0,
+            {
+              "b": [
+                "tf.expand_dims",
+                0,
+                0
+              ]
+            }
+          ]
+        ]
+      },
+      {
+        "module": "keras.src.layers.core.tf_op_layer",
+        "class_name": "TFOpLambda",
+        "config": {
+          "name": "tf.compat.v1.squeeze",
+          "trainable": true,
+          "dtype": "float32",
+          "function": "compat.v1.squeeze"
+        },
+        "registered_name": "TFOpLambda",
+        "build_config": {
+          "input_shape": [
+            null,
+            2,
+            1
+          ]
+        },
+        "name": "tf.compat.v1.squeeze",
+        "inbound_nodes": [
+          [
+            "tf.linalg.matmul",
+            0,
+            0,
+            {
+              "axis": -1,
+              "name": null
+            }
+          ]
+        ]
+      }
+    ],
+    "input_layers": [
+      [
+        "sequence_input",
+        0,
+        0
+      ],
+      [
+        "taskid_input",
+        0,
+        0
+      ],
+      [
+        "input_1",
+        0,
+        0
+      ]
+    ],
+    "output_layers": [
+      [
+        "tf.compat.v1.squeeze",
+        0,
+        0
+      ]
+    ]
+  },
+  "keras_version": "2.15.0",
+  "backend": "tensorflow"
+}

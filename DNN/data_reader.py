@@ -184,8 +184,8 @@ def get_statistics(tweets, labels, word_list_path):
 
 def turn2(Y):
     for i in range(len(Y)):
-        if Y[i]==2:
-            Y[i] -= 1
+        if Y[i]>=2:
+            Y[i] = 1
     return Y
 
 def read_dataset(args, vocab_path, MAX_SEQUENCE_LENGTH):
@@ -193,7 +193,7 @@ def read_dataset(args, vocab_path, MAX_SEQUENCE_LENGTH):
     df_task_test = pd.read_csv(args.trial_data_path, encoding="utf-8")
 
     df_task['task_idx'] = [0]*len(df_task)
-    if args.data_path.split('\\')[-1] not in ['df_train.csv', 'dv_train.csv']:  # the 'df_train.csv' means SE datasets.
+    if args.data_path.split('/')[-1] not in ['df_train.csv', 'dv_train.csv']:  # the 'df_train.csv' means SE datasets.
         df_task['label'] = df_task['class']  # 两个数据集的区别
     df_task_test['task_idx'] = [0]*len(df_task_test)
 
@@ -224,6 +224,7 @@ def read_dataset(args, vocab_path, MAX_SEQUENCE_LENGTH):
     Y = data_all['label']
     Y = turn2(Y)
     y_test = df_task_test['label']
+    y_test = turn2(y_test)
     y_test = to_categorical(y_test)
     dummy_y = to_categorical(Y)
     X_train_data, y_train = data_tokens, dummy_y
