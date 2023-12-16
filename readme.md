@@ -5,6 +5,10 @@ This repository provides code for the paper "Hate Speech Detection based on Sent
 
 # Requirements
 Python = 3.9
+# run on colab
++ !python -m nltk.downloader 'punkt'
++ !sudo apt-get update
++ !sudo apt-get install python3-enchant -y
 
 # Prepare data
 + [DV](https://github.com/t-davidson/hate-speech-and-offensive-language)
