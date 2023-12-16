@@ -22,12 +22,11 @@ class Evaluator():
     def evaluate(self, model, epoch, print_info=False):
         def get_hateSpeech(test_task_idx, test_y_label, test_pred_label):
             hs_pred, hs_y = [], []
-            print('task_idx[0]==[1, 0]', test_task_idx[0][0] == 0, test_task_idx[0][1] == 1)
+            # print('task_idx[0]==[1, 0]', test_task_idx[0][0] == 0, test_task_idx[0][1] == 1)
             for i in range(len(test_task_idx)):
                 if test_task_idx[i][0] == 1:
                     hs_pred.append(test_pred_label[i])
                     hs_y.append(test_y_label[i])
-            print('test set size=',len(hs_y))
             return hs_pred, hs_y
 
         if self.model_type in {'CNN'}:
