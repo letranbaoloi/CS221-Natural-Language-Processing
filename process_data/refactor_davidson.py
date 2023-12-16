@@ -12,7 +12,9 @@ unfiltered = [line.rstrip('\n') for line in open(csv_file_path)]
 pattern = re.compile(r'^\d+,')  # ^\d+ matches one or more digits at the beginning of a line, followed by a comma
 filtered = [line for line in unfiltered if line and pattern.match(line)]
 
+header = "id,tweet,label\n"
 with open(csv_dv_data, 'w') as fp:
+    fp.write(header)
     for line in filtered:
         parts = line.split(",")
         tweet = ', '.join(parts[6:]).replace("\"", "")
