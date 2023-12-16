@@ -33,5 +33,8 @@ The SE dataset may need some adjustment in formatting from tsv to csv. Make sure
 
 The glove txt file can be downloaded [here](https://www.kaggle.com/datasets/aellatif/glove6b300dtxt). There is also a larger one available, but make sure to adjust the script for it [here](https://www.kaggle.com/datasets/authman/pickled-glove840b300d-for-10sec-loading)
 # Usage
-After download the data and the pre-trained word vectors, just run the sample_run.sh
-
+## **Train**
+`python .\DNN\train.py -d path_data_train --trial path_data_test -s .\data\sentiment_datasets\train_E6oV3lV.csv --word_list .\data\word_list\word_all.txt --emb .\data\glove.6B.300d.txt -o .\output_dir -b 512 --epochs 60 --lr 0.002 --maxlen 50 -t HHMM_transformer
+`
+## **Test**
+`python .\DNN\inference.py --word_list .\data\word_list\word_all.txt  --maxlen 50 --vocab-path .\output_dir\vocab.pkl`
