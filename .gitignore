@@ -26,3 +26,5 @@ DNN/__pycache__/
 # Ignore any generated files or directories
 .DS_Store
 .env
+
+.idea

@@ -11,6 +11,7 @@ Python = 3.9
 + !sudo apt-get install python3-enchant -y
 
 ## Data
+- ## **_Don't care about the data below; just download it here!!! [DATA-SKS](https://drive.google.com/file/d/1XmpvGpbPpjUn4MtuhMvxRetLLk_vZne4/view?usp=sharing)_**
 
 - ### SemEval data-set
 
