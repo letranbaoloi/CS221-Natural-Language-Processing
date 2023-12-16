@@ -1,5 +1,25 @@
+# Ignore compiled Python files
+*.pyc
+__pycache__/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore the 'data' directory contents
 data/SemEval_task5/*.csv
+
+# Ignore the 'data' directory contents
 data/glove.6B.300d.txt
-DNN/inference.py
+
+# Ignore the 'my_model' directory contents
 my_model/*
-output_dir/*/
+
+# Ignore the 'output_dir' directory contents
+output_dir/*
+
+# Ignore the '__pycache__' directory
+DNN/__pycache__/
+
+# Ignore any generated files or directories
+.DS_Store
+.env
