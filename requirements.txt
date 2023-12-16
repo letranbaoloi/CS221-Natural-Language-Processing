@@ -8,3 +8,4 @@ tensorflow==2.15.0
 tensorflow_intel
 wordninja==2.0.0
 langdetect==1.0.9
+gradio
