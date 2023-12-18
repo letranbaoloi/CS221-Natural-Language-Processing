@@ -28,3 +28,5 @@ DNN/__pycache__/
 .DS_Store
 .env
 .idea
+model/
+log/
