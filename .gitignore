@@ -30,3 +30,4 @@ DNN/__pycache__/
 .idea
 model/
 log/
+flagged/
