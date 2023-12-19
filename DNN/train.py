@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import argparse
 import logging
+import os.path
+
 import numpy as np
 from time import time
 import utils as U
@@ -10,7 +12,6 @@ import data_reader as dataset
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 from models import CustomModelBuilder
-import tensorflow as tf
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
@@ -65,7 +66,7 @@ def save_model_architecture(model, out_dir):
 def main():
     args = parse_arguments()
     out_dir = args.out_dir_path
-    U.mkdir_p(out_dir + '/preds')
+    # U.mkdir_p(out_dir + '/preds')
     U.set_logger(out_dir=out_dir, model_type=args.model_type)
     U.print_args(args)
 
@@ -135,7 +136,7 @@ def main():
 
     evl.print_final_info()
     print('===Saving model=======')
-    model.save("./my_model/", save_format="tf")
+    model.save(os.path.join(out_dir, 'my_model/'), save_format="tf")
 
 if __name__ == "__main__":
     main()

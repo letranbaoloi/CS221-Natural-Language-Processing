@@ -1,33 +1,6 @@
-# Ignore compiled Python files
-*.pyc
-__pycache__/
-
-# Ignore Jupyter Notebook checkpoints
-.ipynb_checkpoints/
-
-# Ignore specific CSV files in the 'data' directory
+# ignore data
+data/davidson/*
 data/SemEval_task5/*.csv
-data/davison/dv_data.csv
-data/davison/dv_test.csv
-data/davison/dv_train.csv
-
-# Ignore the 'data' directory contents
 data/glove.6B.300d.txt
-
-# Ignore the entire 'my_model' directory
-my_model/
-
-# Ignore the entire 'output_dir' directory
-output_dir/
-output_dir_davidson/
-
-# Ignore the '__pycache__' directory
-DNN/__pycache__/
-
-# Ignore any generated files or directories
-.DS_Store
-.env
-.idea
-model/
-log/
-flagged/
+# gradio
+/flagged
