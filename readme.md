@@ -28,7 +28,6 @@
 | 5      | 21522706      | Nguyễn Minh Trí           |21522706@gm.uit.edu.vn   |
 ## ĐỒ ÁN MÔN HỌC
 <a name="doan"></a>
-## Demo
 # SKS
 This repository provides code for the paper "Hate Speech Detection based on Sentiment Knowledge Sharing"
 
