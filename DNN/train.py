@@ -80,18 +80,17 @@ def main():
 
 def train_with_cross_validation_single_fold(model, train_x, train_y, val_x, val_y, args, task_idx_train, ruling_embedding_train, task_idx_test, ruling_embedding_test):
     if args.model_type in {'CNN'}:
-        history = model.fit(train_x, train_y, batch_size=args.batch_size, epochs=1,
+        history = model.fit(train_x, train_y, batch_size=args.batch_size, epochs=args.epochs,
                             validation_data=(val_x, val_y), verbose=1)
     elif args.model_type in {'HHMM', 'HHMM_transformer'}:
         history = model.fit([train_x, task_idx_train, ruling_embedding_train], train_y,
-                            batch_size=args.batch_size, epochs=1,
+                            batch_size=args.batch_size, epochs=args.epochs,
                             validation_data=([val_x, task_idx_test, ruling_embedding_test], val_y),
                             verbose=1)
     else:
-        history = model.fit(train_x, train_y, batch_size=args.batch_size, epochs=1,
+        history = model.fit(train_x, train_y, batch_size=args.batch_size, epochs=args.epochs,
                             validation_data=(val_x, val_y), verbose=1)
-
-    return history
+    return model, history
 def train_with_cross_validation(args):
     train_x, test_x, train_y, test_y, train_chars, test_chars, task_idx_train, task_idx_test, ruling_embedding_train, ruling_embedding_test,\
         category_embedding_train, category_embedding_test, vocab = prepare_data(args)
@@ -122,12 +121,8 @@ def train_with_cross_validation(args):
 
         logger.info(f'Training fold {fold + 1}/{skf.get_n_splits()}')
 
-        # Define the ModelCheckpoint callback to save the best model based on validation accuracy
-        checkpoint_path = os.path.join(fold_out_dir, f'best_model_fold_{fold}.h5')
-        checkpoint = ModelCheckpoint(checkpoint_path, monitor='val_accuracy', save_best_only=True, mode='max', verbose=1)
-
         # Train with the ModelCheckpoint callback
-        model_history = train_with_cross_validation_single_fold(model, train_x_fold, train_y_fold, val_x_fold, val_y_fold, args,
+        model, model_history = train_with_cross_validation_single_fold(model, train_x_fold, train_y_fold, val_x_fold, val_y_fold, args,
                                                                task_idx_train_fold, ruling_embedding_train_fold, task_idx_val_fold, ruling_embedding_val_fold)
 
         logger.info(f'Saving model architecture for fold {fold + 1}')
@@ -136,18 +131,12 @@ def train_with_cross_validation(args):
         # Save the entire model in TensorFlow SavedModel format
         model.save(os.path.join(fold_out_dir, f'my_model_{fold}/'), save_format="tf")
 
-        evl = Evaluator(args, dataset, fold_out_dir, val_x_fold, val_chars_fold, task_idx_val_fold, ruling_embedding_val_fold, val_y_fold,
-                        args.batch_size)
-
-        evl.evaluate(model, 0)
-
-    # Evaluate the model on the test set after cross-validation
-    evl_test = Evaluator(args, dataset, args.out_dir_path, test_x, test_chars, task_idx_test, ruling_embedding_test, test_y,
-                         args.batch_size)
-    evl_test.evaluate(model, 0)
-
-    evl_test.print_final_info()
-    print('===Best models and model architectures saved=======')
+        # Evaluate the model on the test set after cross-validation
+        print("Evaluate the model on the test set after cross-validation")
+        evl_test = Evaluator(args, dataset, args.out_dir_path, test_x, test_chars, task_idx_test, ruling_embedding_test, test_y,
+                             args.batch_size)
+        evl_test.evaluate(model, args.epochs)
+        evl_test.print_final_info()
 
 
 def train_normal(args):
