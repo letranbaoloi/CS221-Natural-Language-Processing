@@ -193,7 +193,7 @@ def read_dataset(args, vocab_path, MAX_SEQUENCE_LENGTH):
     df_task_test = pd.read_csv(args.trial_data_path, encoding="utf-8")
 
     df_task['task_idx'] = [0]*len(df_task)
-    if args.data_path.split('/')[-1] not in ['df_train.csv', 'dv_train.csv','train_1.csv', 'train_2.csv', 'train_3.csv', 'train_4.csv', 'train_5.csv']:  # the 'df_train.csv' means SE datasets.
+    if args.data_path.split('\\')[-1] not in ['df_train.csv', 'dv_train.csv','test_data.csv', 'train_data.csv', 'train_3.csv', 'train_4.csv', 'train_5.csv']:  # the 'df_train.csv' means SE datasets.
         df_task['label'] = df_task['class']  # 两个数据集的区别
     df_task_test['task_idx'] = [0]*len(df_task_test)
 

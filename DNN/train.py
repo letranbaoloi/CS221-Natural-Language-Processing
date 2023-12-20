@@ -2,16 +2,18 @@
 import argparse
 import logging
 import os.path
-
 import numpy as np
 from time import time
 import utils as U
 import pickle as pk
 from model_evaluator import Evaluator
+from tensorflow.keras.callbacks import ModelCheckpoint
 import data_reader as dataset
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
+from sklearn.model_selection import StratifiedKFold
 from models import CustomModelBuilder
+
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
@@ -39,6 +41,7 @@ def parse_arguments():
     parser.add_argument("--maxlen", dest="maxlen", type=int, metavar='<int>', default=50, help="Maximum allowed number of words during training. '0' means no limit (default=0)")
     parser.add_argument("--word_norm", dest="word_norm", type=int, metavar='<int>', default=1, help="0-stemming, 1-lemma, other-do nothing")
     parser.add_argument("--non_gate", dest="non_gate", action='store_true', help="Model type (SWEM|regp|breg|bregp) (default=SWEM)")
+    parser.add_argument("--cross_validation", dest="cross_validation", action='store_true', help="Perform cross-validation training")
     return parser.parse_args()
 
 def prepare_data(args):
@@ -62,25 +65,97 @@ def build_model(args, ruling_embedding_test, vocab, output_dim):
 def save_model_architecture(model, out_dir):
     with open(out_dir + '/model_arch.json', 'w') as arch:
         arch.write(model.to_json(indent=2))
-
 def main():
     args = parse_arguments()
     out_dir = args.out_dir_path
-    # U.mkdir_p(out_dir + '/preds')
     U.set_logger(out_dir=out_dir, model_type=args.model_type)
     U.print_args(args)
 
     assert args.loss in {'mse', 'ce'}
 
+    if args.cross_validation:
+        train_with_cross_validation(args)
+    else:
+        train_normal(args)
+
+def train_with_cross_validation_single_fold(model, train_x, train_y, val_x, val_y, args, task_idx_train, ruling_embedding_train, task_idx_test, ruling_embedding_test):
+    if args.model_type in {'CNN'}:
+        history = model.fit(train_x, train_y, batch_size=args.batch_size, epochs=1,
+                            validation_data=(val_x, val_y), verbose=1)
+    elif args.model_type in {'HHMM', 'HHMM_transformer'}:
+        history = model.fit([train_x, task_idx_train, ruling_embedding_train], train_y,
+                            batch_size=args.batch_size, epochs=1,
+                            validation_data=([val_x, task_idx_test, ruling_embedding_test], val_y),
+                            verbose=1)
+    else:
+        history = model.fit(train_x, train_y, batch_size=args.batch_size, epochs=1,
+                            validation_data=(val_x, val_y), verbose=1)
+
+    return history
+def train_with_cross_validation(args):
     train_x, test_x, train_y, test_y, train_chars, test_chars, task_idx_train, task_idx_test, ruling_embedding_train, ruling_embedding_test,\
         category_embedding_train, category_embedding_test, vocab = prepare_data(args)
 
-    if not args.vocab_path:
-        with open(out_dir + '/vocab.pkl', 'wb') as vocab_file:
-            pk.dump(vocab, vocab_file)
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+    for fold, (train_index, val_index) in enumerate(skf.split(train_x, np.argmax(train_y, axis=1))):
+        fold_out_dir = os.path.join(args.out_dir_path, f'fold_{fold}')
+        U.mkdir_p(fold_out_dir)
+        U.set_logger(out_dir=fold_out_dir, model_type=args.model_type)
+
+        train_x_fold, val_x_fold = train_x[train_index], train_x[val_index]
+        train_y_fold, val_y_fold = train_y[train_index], train_y[val_index]
+        train_chars_fold, val_chars_fold = train_chars[train_index], train_chars[val_index]
+        task_idx_train_fold, ruling_embedding_train_fold = task_idx_train[train_index], ruling_embedding_train[train_index]
+        task_idx_val_fold, ruling_embedding_val_fold = task_idx_train[val_index], ruling_embedding_train[val_index]
+
+        model = build_model(args, ruling_embedding_test, vocab, len(train_y_fold[0]))
+
+        if not args.vocab_path:
+            with open(fold_out_dir + '/vocab.pkl', 'wb') as vocab_file:
+                pk.dump(vocab, vocab_file)
+
+        bincounts, mfs_list = U.bincounts(train_y_fold)
+        with open(f'{fold_out_dir}/bincounts.txt', 'w') as output_file:
+            for bincount in bincounts:
+                output_file.write(str(bincount) + '\n')
+
+        logger.info(f'Training fold {fold + 1}/{skf.get_n_splits()}')
+
+        # Define the ModelCheckpoint callback to save the best model based on validation accuracy
+        checkpoint_path = os.path.join(fold_out_dir, f'best_model_fold_{fold}.h5')
+        checkpoint = ModelCheckpoint(checkpoint_path, monitor='val_accuracy', save_best_only=True, mode='max', verbose=1)
+
+        # Train with the ModelCheckpoint callback
+        model_history = train_with_cross_validation_single_fold(model, train_x_fold, train_y_fold, val_x_fold, val_y_fold, args,
+                                                               task_idx_train_fold, ruling_embedding_train_fold, task_idx_val_fold, ruling_embedding_val_fold)
+
+        logger.info(f'Saving model architecture for fold {fold + 1}')
+        save_model_architecture(model, fold_out_dir)
+
+        # Save the entire model in TensorFlow SavedModel format
+        model.save(os.path.join(fold_out_dir, f'my_model_{fold}/'), save_format="tf")
+
+        evl = Evaluator(args, dataset, fold_out_dir, val_x_fold, val_chars_fold, task_idx_val_fold, ruling_embedding_val_fold, val_y_fold,
+                        args.batch_size)
+
+        evl.evaluate(model, 0)
+
+    # Evaluate the model on the test set after cross-validation
+    evl_test = Evaluator(args, dataset, args.out_dir_path, test_x, test_chars, task_idx_test, ruling_embedding_test, test_y,
+                         args.batch_size)
+    evl_test.evaluate(model, 0)
+
+    evl_test.print_final_info()
+    print('===Best models and model architectures saved=======')
+
+
+def train_normal(args):
+    train_x, test_x, train_y, test_y, train_chars, test_chars, task_idx_train, task_idx_test, ruling_embedding_train, ruling_embedding_test,\
+        category_embedding_train, category_embedding_test, vocab = prepare_data(args)
 
     bincounts, mfs_list = U.bincounts(train_y)
-    with open('%s/bincounts.txt' % out_dir, 'w') as output_file:
+    with open('%s/bincounts.txt' % args.out_dir_path, 'w') as output_file:
         for bincount in bincounts:
             output_file.write(str(bincount) + '\n')
 
@@ -97,9 +172,9 @@ def main():
     model = build_model(args, ruling_embedding_test, vocab, len(train_y[0]))
 
     logger.info('Saving model architecture')
-    save_model_architecture(model, out_dir)
+    save_model_architecture(model, args.out_dir_path)
 
-    evl = Evaluator(args, dataset, out_dir, test_x, test_chars, task_idx_test, ruling_embedding_test, test_y, args.batch_size)
+    evl = Evaluator(args, dataset, args.out_dir_path, test_x, test_chars, task_idx_test, ruling_embedding_test, test_y, args.batch_size)
 
     total_train_time = 0
     total_eval_time = 0
@@ -136,7 +211,7 @@ def main():
 
     evl.print_final_info()
     print('===Saving model=======')
-    model.save(os.path.join(out_dir, 'my_model/'), save_format="tf")
+    model.save(os.path.join(args.out_dir_path, 'my_model/'), save_format="tf")
 
 if __name__ == "__main__":
     main()

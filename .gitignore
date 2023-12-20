@@ -1,5 +1,6 @@
 # ignore data
-data/davidson/*
+data/davidson/test_data.csv
+data/davidson/train_data.csv
 data/SemEval_task5/*.csv
 data/glove.6B.300d.txt
 # gradio

@@ -1,7 +1,0 @@
-# Command train data SemEval
-python .\DNN\train.py -d .\data\SemEval_task5\df_train.csv --trial .\data\SemEval_task5\df_test.csv -s .\data\sentiment_datasets\train_E6oV3lV.csv --word_list .\data\word_list\word_all.txt --emb .\data\glove.6B.300d.txt -o .\output_dir -b 512 --epochs 60 --lr 0.002 --maxlen 50 -t HHMM_transformer
-# Command train data davidson
-python .\DNN\train.py -d .\data\davidson\dv_train.csv --trial .\data\davidson\dv_test.csv -s .\data\sentiment_datasets\train_E6oV3lV.csv --word_list .\data\word_list\word_all.txt --emb .\data\glove.6B.300d.txt -o .\output_dir_davidson -b 512 --epochs 60 --lr 0.002 --maxlen 50 -t HHMM_transformer
-# run test
-python .\DNN\inference.py --word_list .\data\word_list\word_all.txt  --maxlen 50 --vocab-path .\output_dir\vocab.pkl
-#### Copy the above content to the terminal
