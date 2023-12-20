@@ -78,19 +78,6 @@ def main():
     else:
         train_normal(args)
 
-def train_with_cross_validation_single_fold(model, train_x, train_y, val_x, val_y, args, task_idx_train, ruling_embedding_train, task_idx_test, ruling_embedding_test):
-    if args.model_type in {'CNN'}:
-        history = model.fit(train_x, train_y, batch_size=args.batch_size, epochs=args.epochs,
-                            validation_data=(val_x, val_y), verbose=1)
-    elif args.model_type in {'HHMM', 'HHMM_transformer'}:
-        history = model.fit([train_x, task_idx_train, ruling_embedding_train], train_y,
-                            batch_size=args.batch_size, epochs=args.epochs,
-                            validation_data=([val_x, task_idx_test, ruling_embedding_test], val_y),
-                            verbose=1)
-    else:
-        history = model.fit(train_x, train_y, batch_size=args.batch_size, epochs=args.epochs,
-                            validation_data=(val_x, val_y), verbose=1)
-    return model, history
 def train_with_cross_validation(args):
     train_x, test_x, train_y, test_y, train_chars, test_chars, task_idx_train, task_idx_test, ruling_embedding_train, ruling_embedding_test,\
         category_embedding_train, category_embedding_test, vocab = prepare_data(args)
@@ -122,14 +109,23 @@ def train_with_cross_validation(args):
         logger.info(f'Training fold {fold + 1}/{skf.get_n_splits()}')
 
         # Train with the ModelCheckpoint callback
-        model, model_history = train_with_cross_validation_single_fold(model, train_x_fold, train_y_fold, val_x_fold, val_y_fold, args,
-                                                               task_idx_train_fold, ruling_embedding_train_fold, task_idx_val_fold, ruling_embedding_val_fold)
+        if args.model_type in {'CNN'}:
+            history = model.fit(train_chars_fold, train_y_fold, batch_size=args.batch_size, epochs=args.epochs,
+                            validation_data=(val_chars_fold, val_y_fold), verbose=1)
+        elif args.model_type in {'HHMM', 'HHMM_transformer'}:
+            history = model.fit([train_x_fold, task_idx_train_fold, ruling_embedding_train_fold], train_y_fold,
+                                batch_size=args.batch_size, epochs=args.epochs,
+                                validation_data=([val_x_fold, task_idx_val_fold, ruling_embedding_val_fold], val_y_fold),
+                                verbose=1)
+        else:
+            history = model.fit(train_x_fold, train_y_fold, batch_size=args.batch_size, epochs=args.epochs,
+                                validation_data=(val_x_fold, val_y_fold), verbose=1)
 
         logger.info(f'Saving model architecture for fold {fold + 1}')
         save_model_architecture(model, fold_out_dir)
 
         # Save the entire model in TensorFlow SavedModel format
-        model.save(os.path.join(fold_out_dir, f'my_model_{fold}/'), save_format="tf")
+        model.save(os.path.join(fold_out_dir, f'my_model_{fold+1}/'), save_format="tf")
 
         # Evaluate the model on the test set after cross-validation
         print("Evaluate the model on the test set after cross-validation")

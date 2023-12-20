@@ -18,6 +18,7 @@ class Evaluator():
         self.best_acc = 0
         self.best_report = None
         self.best_test_epoch = -1
+        self.cross_validation = args.cross_validation
 
     def evaluate(self, model, epoch, print_info=False):
         def get_hateSpeech(test_task_idx, test_y_label, test_pred_label):
@@ -55,7 +56,8 @@ class Evaluator():
             self.best_test_f1 = self.f1_hs
             self.best_test_epoch = epoch
             self.best_report = self.report
-            model.save(self.out_dir + '/best_model', overwrite=True, save_format="tf")
+            if not self.cross_validation:
+                model.save(self.out_dir + '/best_model', overwrite=True, save_format="tf")
 
         if print_info:
 
