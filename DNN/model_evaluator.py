@@ -55,7 +55,7 @@ class Evaluator():
             self.best_test_f1 = self.f1_hs
             self.best_test_epoch = epoch
             self.best_report = self.report
-            # model.save_weights(self.out_dir + '/best_model_weights.h5', overwrite=True)
+            model.save(self.out_dir + '/best_model', overwrite=True)
 
         if print_info:
 

@@ -210,8 +210,6 @@ def train_normal(args):
     logger.info('Evaluation: %i seconds in total' % total_eval_time)
 
     evl.print_final_info()
-    print('===Saving model=======')
-    model.save(os.path.join(args.out_dir_path, 'my_model/'), save_format="tf")
 
 if __name__ == "__main__":
     main()
