@@ -5,7 +5,7 @@
 </p>
 
 <!-- Title -->
-<h1 align="center"><b>CS117 - Xử lý ngôn ngữ tự nhiên</b></h1>
+<h1 align="center"><b>CS221 - Xử lý ngôn ngữ tự nhiên</b></h1>
 
 
 
