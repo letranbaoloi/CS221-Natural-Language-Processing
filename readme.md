@@ -41,8 +41,8 @@ Python = 3.9
 + !sudo apt-get install python3-enchant -y
 
 ## Data
-- ## **_Download models here !!! [MODELS](https://drive.google.com/drive/folders/1NMphGjxDkNpc1j8z6JY7_sgrS0yeoO72?usp=sharing)_**
-- ## **_Don't care about the data below; just download it here!!! [DATA-SKS](https://drive.google.com/file/d/1XmpvGpbPpjUn4MtuhMvxRetLLk_vZne4/view?usp=sharing)_**
+- ## **_Download models here !!! [MODELS](https://drive.google.com/drive/folders/16p85gSCjGhZsL0j8AR7ieuhlT5l2VQjX?usp=sharing)_**
+- ## **_Don't care about the data below; just download it here!!! [DATA-SKS](https://drive.google.com/drive/folders/1-6Lq1WDZJaZkCOjfAT0RAekx88go0si5?usp=sharing)_**
 
 - ### SemEval data-set
 
