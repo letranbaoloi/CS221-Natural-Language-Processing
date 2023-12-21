@@ -13,7 +13,7 @@ from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 from sklearn.model_selection import StratifiedKFold
 from models import CustomModelBuilder
-
+import tensorflow as tf
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
@@ -42,6 +42,8 @@ def parse_arguments():
     parser.add_argument("--word_norm", dest="word_norm", type=int, metavar='<int>', default=1, help="0-stemming, 1-lemma, other-do nothing")
     parser.add_argument("--non_gate", dest="non_gate", action='store_true', help="Model type (SWEM|regp|breg|bregp) (default=SWEM)")
     parser.add_argument("--cross_validation", dest="cross_validation", action='store_true', help="Perform cross-validation training")
+    parser.add_argument("--retrain_cross_validation", dest="retrain_cross_validation", action='store_true', help="Perform cross-validation training")
+    parser.add_argument("--model_retrain_cross_validation_path", dest="model_retrain_cross_validation_path", default="", help="model to train again")
     return parser.parse_args()
 
 def prepare_data(args):
@@ -72,12 +74,77 @@ def main():
     U.print_args(args)
 
     assert args.loss in {'mse', 'ce'}
-
+    if args.retrain_cross_validation:
+        retrain_cross_validataion(args)
     if args.cross_validation:
         train_with_cross_validation(args)
     else:
         train_normal(args)
 
+def retrain_cross_validataion(args):
+    train_x, test_x, train_y, test_y, train_chars, test_chars, task_idx_train, task_idx_test, ruling_embedding_train, ruling_embedding_test,\
+        category_embedding_train, category_embedding_test, vocab = prepare_data(args)
+
+    if not args.vocab_path:
+        with open(args.out_dir_path + '/vocab.pkl', 'wb') as vocab_file:
+            pk.dump(vocab, vocab_file)
+    bincounts, mfs_list = U.bincounts(train_y)
+    with open('%s/bincounts.txt' % args.out_dir_path, 'w') as output_file:
+        for bincount in bincounts:
+            output_file.write(str(bincount) + '\n')
+
+    logger.info('Statistics:')
+    logger.info('  train_x shape: ' + str(np.array(train_x).shape))
+    logger.info('  test_x shape:  ' + str(np.array(test_x).shape))
+    logger.info('  train_chars shape: ' + str(np.array(train_chars).shape))
+    logger.info('  test_chars shape:  ' + str(np.array(test_chars).shape))
+    logger.info('  train_y shape: ' + str(train_y.shape))
+    logger.info('  test_y shape:  ' + str(test_y.shape))
+
+    optimizer = optimizer_selection()
+
+    # model = build_model(args, ruling_embedding_test, vocab, len(train_y[0]))
+    model = tf.keras.models.load_model(args.model_retrain_cross_validation_path)
+
+    logger.info('Saving model architecture')
+    save_model_architecture(model, args.out_dir_path)
+
+    evl = Evaluator(args, dataset, args.out_dir_path, test_x, test_chars, task_idx_test, ruling_embedding_test, test_y, args.batch_size)
+
+    total_train_time = 0
+    total_eval_time = 0
+    t1 = time()
+
+    for ii in range(args.epochs):
+        t0 = time()
+        if args.model_type in {'CNN'}:
+            train_history = model.fit(train_chars, train_y, batch_size=args.batch_size, epochs=1, validation_data=(test_chars, test_y), verbose=1)
+        elif args.model_type in {'HHMM', 'HHMM_transformer'}:
+            train_history = model.fit([train_x, task_idx_train, ruling_embedding_train], train_y, batch_size=args.batch_size, epochs=1, validation_data=([test_x, task_idx_test, ruling_embedding_test], test_y), verbose=1)
+        else:
+            train_history = model.fit(train_x, train_y, batch_size=args.batch_size, epochs=1, validation_data=(test_x, test_y), verbose=1)
+        tr_time = time() - t0
+        total_train_time += tr_time
+
+        t0 = time()
+        evl.evaluate(model, ii)
+        evl_time = time() - t0
+        total_eval_time += evl_time
+        total_time = time()-t1
+
+        train_loss = train_history.history['loss'][0]
+        if args.loss == 'mse':
+            train_metric = train_history.history['mean_absolute_error'][0]
+        else:
+            train_metric = train_history.history['accuracy'][0]
+        logger.info('Epoch %d, train: %is, evaluation: %is, total_time: %is' % (ii, tr_time, evl_time, total_time))
+        logger.info('[Train] loss: %.4f, metric: %.4f' % (train_loss, train_metric))
+        evl.print_info()
+
+    logger.info('Training:   %i seconds in total' % total_train_time)
+    logger.info('Evaluation: %i seconds in total' % total_eval_time)
+
+    evl.print_final_info()
 def train_with_cross_validation(args):
     train_x, test_x, train_y, test_y, train_chars, test_chars, task_idx_train, task_idx_test, ruling_embedding_train, ruling_embedding_test,\
         category_embedding_train, category_embedding_test, vocab = prepare_data(args)
