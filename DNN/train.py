@@ -85,7 +85,7 @@ def train_with_cross_validation(args):
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
     for fold, (train_index, val_index) in enumerate(skf.split(train_x, np.argmax(train_y, axis=1))):
-        fold_out_dir = os.path.join(args.out_dir_path, f'fold_{fold}')
+        fold_out_dir = os.path.join(args.out_dir_path, f'fold_{fold+1}')
         U.mkdir_p(fold_out_dir)
         U.set_logger(out_dir=fold_out_dir, model_type=args.model_type)
 
@@ -139,6 +139,9 @@ def train_normal(args):
     train_x, test_x, train_y, test_y, train_chars, test_chars, task_idx_train, task_idx_test, ruling_embedding_train, ruling_embedding_test,\
         category_embedding_train, category_embedding_test, vocab = prepare_data(args)
 
+    if not args.vocab_path:
+        with open(args.out_dir_path + '/vocab.pkl', 'wb') as vocab_file:
+            pk.dump(vocab, vocab_file)
     bincounts, mfs_list = U.bincounts(train_y)
     with open('%s/bincounts.txt' % args.out_dir_path, 'w') as output_file:
         for bincount in bincounts:
