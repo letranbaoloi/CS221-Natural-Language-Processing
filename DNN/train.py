@@ -76,7 +76,7 @@ def main():
     assert args.loss in {'mse', 'ce'}
     if args.retrain_cross_validation:
         retrain_cross_validataion(args)
-    if args.cross_validation:
+    elif args.cross_validation:
         train_with_cross_validation(args)
     else:
         train_normal(args)
