@@ -46,8 +46,8 @@ Python = 3.9
 
 - ### SemEval data-set
 
-    We provide the trainig- and test-set for the [SemEval2019 data-set](http://hatespeech.di.unito.it/hateval.html) as two separate csv files `df_train.csv` and `df_test.csv`. To accomodate the original implementation, the original fields `id`, `text` and `HS` have already been renamed as `task_idx`, `tweet` and `label`.
-
+    We provide the trainig- and dev-set for the [SemEval2019 data-set](https://github.com/cicl2018/HateEvalTeam/tree/master/Data%20Files/Data%20Files) as two separate csv files `df_train.csv` and `df_test.csv`. To accomodate the original implementation, the original fields `id`, `text` and `HS` have already been renamed as `task_idx`, `tweet` and `label`.
+    Test-set: [Test set](https://github.com/matteobrv/repro-SKS/blob/master/data/semeval_data/df_test.csv)
 - ### Davidson data-set
 
     We include both the original [Davidson data-set](https://github.com/t-davidson/hate-speech-and-offensive-language/tree/master/data) `davidson_data_full.csv` and our 5-fold cross-validation splits, where the `class` field has already been renamed as `label` to accomodate the original implementation.

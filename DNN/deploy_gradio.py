@@ -16,9 +16,6 @@ def process_text(input_text, dataset):
         predictions = davidson(input)
     return process_output(predictions)
 
-# Choose a theme (e.g., "light", "dark", "gr", "sketch", "translucent", etc.)
-theme = "sketch"
-
 demo = gr.Interface(
     fn=process_text,
     inputs=[
@@ -26,7 +23,6 @@ demo = gr.Interface(
         gr.Radio(["SemEval", "Davidson"], value='SemEval', label="Model trained with dataset...", type="value")
     ],
     outputs=[gr.Textbox(None, label="Result")],
-    theme=theme  # Add the theme parameter here
 )
 
 if __name__ == "__main__":
