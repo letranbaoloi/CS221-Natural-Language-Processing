@@ -1,8 +1,6 @@
 # ignore data
 data/davidson/test_data.csv
 data/davidson/train_data.csv
-data/SemEval_task5/dev_en.tsv
-data/SemEval_task5/train_en.tsv
 data/SemEval_task5/df_test.csv
 data/SemEval_task5/df_train_dev.csv
 data/glove.6B.300d.txt
