@@ -67,3 +67,6 @@ The glove txt file can be downloaded [here](https://www.kaggle.com/datasets/aell
 `
 ## **Test**
 `python inference.py --word_list ..\word_all.txt  --maxlen 50 --vocab-path ..\vocab.pkl`
+## **Demo**
+https://github.com/bmhungqb/SKS/assets/117832185/6501fad5-abc8-45a8-ac29-2bab0242fc49
+
