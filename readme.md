@@ -26,7 +26,7 @@
 | 2      | 21522110   	 |Bui Manh Hung|21522110@gm.uit.edu.vn|
 | 3      | 21522487 	 |Bui Dinh Quan|21522487@gm.uit.edu.vn|
 | 4      | 21522621      |Huynh Cong Thien|21522621@gm.uit.edu.vn|
-| 5      | 21522706      |Nguyen Minh Tri|21522621@gm.uit.edu.vn|
+| 5      | 21522706      |Nguyen Minh Tri|21522706@gm.uit.edu.vn|
 
 ## Project
 <a name="project"></a>
