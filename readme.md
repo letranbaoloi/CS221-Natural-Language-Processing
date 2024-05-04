@@ -5,40 +5,40 @@
 </p>
 
 <!-- Title -->
-<h1 align="center"><b>CS221 - Xử lý ngôn ngữ tự nhiên</b></h1>
+<h1 align="center"><b>CS221 - Natural Language Processing</b></h1>
 
 
 
-## BẢNG MỤC LỤC
-* [ Giảng viên hướng dẫn](#giangvien)
-* [ Thành viên nhóm](#thanhvien)
-* [ Đồ án môn học](#doan)
-## GIẢNG VIÊN HƯỚNG DẪN
-<a name="giangvien"></a>
-* TS. **Nguyễn Thị Quý**
+## Tabel of contents
+* [ Lecturer](#lecturer)
+* [ Member](#member)
+* [ Project](#project)
+## Lecturer
+<a name="lecturer"></a>
+**Ph.D. Nguyen Thi Quy**
 
-## THÀNH VIÊN NHÓM
-<a name="thanhvien"></a>
-| STT    | MSSV          | Họ và Tên               | Email                   |
-| ------ |:-------------:| ----------------------:|-------------------------:
-| 1      | 21522110      | Bùi Mạnh Hùng          |21522110@gm.uit.edu.vn   |
-| 2      | 21522295      | Lê Trần Bảo Lợi          |21522295@gm.uit.edu.vn   |
-| 3      | 21522487      | Bùi Đình Quân         |21522487@gm.uit.edu.vn   |
-| 4      | 21522621      | Huỳnh Công Thiện          |21522621@gm.uit.edu.vn   |
-| 5      | 21522706      | Nguyễn Minh Trí           |21522706@gm.uit.edu.vn   |
-## ĐỒ ÁN MÔN HỌC
-<a name="doan"></a>
+## Member
+<a name="member"></a>
+<a name="member"></a>
+|**ID**|**Student ID**|**Name**|**Email**|
+| ------ |-------------|----------------------|-------------------------|
+| 1      | 21522295   	 |Le Tran Bao Loi|21522295@gm.uit.edu.vn|
+| 2      | 21522110   	 |Bui Manh Hung|21522110@gm.uit.edu.vn|
+| 3      | 21522487 	 |Bui Dinh Quan|21522487@gm.uit.edu.vn|
+| 4      | 21522621      |Huynh Cong Thien|21522621@gm.uit.edu.vn|
+| 5      | 21522706      |Nguyen Minh Tri|21522621@gm.uit.edu.vn|
+
+## Project
+<a name="project"></a>
 # SKS
 This repository provides code for the paper "Hate Speech Detection based on Sentiment Knowledge Sharing"
 
-![avatar](figure1.jpg)
+![avatar](assets/figure.jpg)
 
 # Requirements
 Python = 3.9
-# run on colab
-+ !python -m nltk.downloader 'punkt'
-+ !sudo apt-get update
-+ !sudo apt-get install python3-enchant -y
+# Run project on colab
+**How to run:** run file **NLP_finalproject.ipynb** in folder colab
 
 ## Data
 - ## **_Download models here !!! [MODELS](https://drive.google.com/drive/folders/16p85gSCjGhZsL0j8AR7ieuhlT5l2VQjX?usp=sharing)_**
